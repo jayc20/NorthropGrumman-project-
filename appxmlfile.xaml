@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:App2"
+             x:Class="App2.MainPage">
+
+    <StackLayout>
+        <!-- Place new controls here -->
+        <Label Text="System Alarm" 
+                   HorizontalOptions="CenterAndExpand"
+               BackgroundColor="SteelBlue"
+               FontFamily="Arial"
+               TextColor="White"
+               Opacity="10"
+               FontSize="30"
+               WidthRequest="1000"
+           
+         />
+        <Button Text="ON" 
+                HeightRequest="250"
+                WidthRequest="10"
+                BorderRadius="2"
+                FontSize="50"
+                Margin="5"
+                />
+        <Button Text="OFF" 
+                HeightRequest="250"
+                WidthRequest="10"
+                BorderRadius="2"
+                FontSize="50"
+                Margin="5"
+                />
+        <BoxView 
+               BackgroundColor="SteelBlue"
+            VerticalOptions="EndAndExpand"
+               />
+    </StackLayout>
+
+</ContentPage>
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:App2"
+             x:Class="App2.MainPage">
+
+    <StackLayout>
+        <!-- Place new controls here -->
+        <Label Text="System Alarm" 
+                   HorizontalOptions="CenterAndExpand"
+               BackgroundColor="SteelBlue"
+               FontFamily="Arial"
+               TextColor="White"
+               Opacity="10"
+               FontSize="30"
+               WidthRequest="1000"
+           
+         />
+        <Button Text="ON" 
+                HeightRequest="250"
+                WidthRequest="10"
+                BorderRadius="2"
+                FontSize="50"
+                Margin="5"
+                />
+        <Button Text="OFF" 
+                HeightRequest="250"
+                WidthRequest="10"
+                BorderRadius="2"
+                FontSize="50"
+                Margin="5"
+                />
+        <BoxView 
+               BackgroundColor="SteelBlue"
+            VerticalOptions="EndAndExpand"
+               />
+    </StackLayout>
+
+</ContentPage>
