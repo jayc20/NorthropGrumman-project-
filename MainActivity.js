@@ -40,7 +40,7 @@ public class MainActivity extends Activity  {
     //SMS message variables
     String etmessage = "Intruder has Entered the Base";
     //destination telephone number
-    String etTelNr = "7543675392";
+    String etTelNr = "";
     int MY_PERMISSIONS_REQUEST_SEND_SMS = 1;
     int stop_value = 1;
 
