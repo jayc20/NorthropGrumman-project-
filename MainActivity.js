@@ -12,6 +12,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.telephony.SmsManager;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Button;
@@ -31,16 +33,16 @@ public class MainActivity extends Activity  {
     private BluetoothAdapter btAdapter = null;
     private BluetoothSocket btSocket = null;
     private OutputStream outStream = null;
-    // SPP UUID service
+    // UUID
     private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-    // MAC-address of Bluetooth module (you must edit this line)
+    // MAC-address of Bluetooth Hc-05
     private static String address = "98:D3:71:FD:51:47";
 
 
     //SMS message variables
     String etmessage = "Intruder has Entered the Base";
-    //destination telephone number
-    String etTelNr = "";
+    //Destination telephone number
+    String etTelNr = "7543675392";
     int MY_PERMISSIONS_REQUEST_SEND_SMS = 1;
     int stop_value = 1;
 
@@ -50,13 +52,13 @@ public class MainActivity extends Activity  {
     private Button Countdownstop;
 
     private CountDownTimer countDownTimer;
+    //2 Minutes in Millisecond
     private long timeLeftMillis = 120000;
     private boolean timeRunning;
-    BluetoothAdapter bluetoothAdapter;
-
 
     protected void onCreate(Bundle savedInstanceState) {
 
+        //Connects Layout xml file to MainActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout);
 
@@ -64,15 +66,22 @@ public class MainActivity extends Activity  {
         CountdownText = findViewById(R.id.timertext);
         countdownbutton = findViewById(R.id.Start);
 
+        //Create Bluetooth Adapter and Check if Bluetooth is enabled
         btAdapter = BluetoothAdapter.getDefaultAdapter();
         checkBTState();
 
+
+        //Controls Start Button
         countdownbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //Send 1 value through Bluetooth
                 sendData("1");
                 Toast.makeText(getBaseContext(), "Alarm is On", Toast.LENGTH_SHORT).show();
+
+                //start and stop Timer
                 startStop();
+
                 if(stop_value > 0) {
                     //Programming to send Sms message when start button is clicked
                     if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.SEND_SMS) !=
@@ -87,20 +96,24 @@ public class MainActivity extends Activity  {
                 }
             }
         });
+        //Controls Stop Button
         Countdownstop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (timeRunning)
                 {
+                    //Send 0 value through Bluetooth
                     sendData("0");
                     Toast.makeText(getBaseContext(), "Alarm is Off", Toast.LENGTH_SHORT).show();
 
+                    //Calls function that stops Timer when Stop Button is clicked
                     stopTimer();
 
                 }
             }
         });
     }
+
     public void startStop(){
         if (timeRunning)
         {
@@ -135,9 +148,11 @@ public class MainActivity extends Activity  {
     //Builds Timer
     public void updateTimer()
     {
+        //Create minute and seconds varialbes
         int minutes =(int) timeLeftMillis/60000;
         int secondes = (int) timeLeftMillis % 60000/ 1000;
 
+        //Construct output to textview on layout xml
         String timeLeftText;
         timeLeftText = "" + minutes;
         timeLeftText += ":";
@@ -145,7 +160,14 @@ public class MainActivity extends Activity  {
         timeLeftText += secondes;
         CountdownText.setText(timeLeftText);
 
+        //If Time in Milliseconds send Zero through Bluetooth
+        if (timeLeftMillis == 0) {
+            sendData("0");
+        }
+
     }
+
+    //Creates Bluetooth Socket
     private BluetoothSocket createBluetoothSocket(BluetoothDevice device) throws IOException {
         if(Build.VERSION.SDK_INT >= 10){
             try {
@@ -175,7 +197,7 @@ public class MainActivity extends Activity  {
         try {
             btSocket = createBluetoothSocket(device);
         } catch (IOException e1) {
-            errorExit("Fatal Error", "In onResume() and socket create failed: " + e1.getMessage() + ".");
+            errorExit("Error", "Could not create Connection: Check Bluetooth module " + e1.getMessage() + ".");
         }
 
         // Discovery is resource intensive.  Make sure it isn't going on
@@ -191,7 +213,7 @@ public class MainActivity extends Activity  {
             try {
                 btSocket.close();
             } catch (IOException e2) {
-                errorExit("Fatal Error", "In onResume() and unable to close socket during connection failure" + e2.getMessage() + ".");
+                errorExit("Error", "Could not  close socket: Check Alarm" + e2.getMessage() + ".");
             }
         }
 
@@ -201,7 +223,7 @@ public class MainActivity extends Activity  {
         try {
             outStream = btSocket.getOutputStream();
         } catch (IOException e) {
-            errorExit("Fatal Error", "In onResume() and output stream creation failed:" + e.getMessage() + ".");
+            errorExit("Error", "Could Send message: Check Alarm" + e.getMessage() + ".");
         }
     }
 
@@ -215,14 +237,14 @@ public class MainActivity extends Activity  {
             try {
                 outStream.flush();
             } catch (IOException e) {
-                errorExit("Fatal Error", "In onPause() and failed to flush output stream: " + e.getMessage() + ".");
+                errorExit("Error", "Failed to flush output stream: Check Alarm" + e.getMessage() + ".");
             }
         }
 
         try     {
             btSocket.close();
         } catch (IOException e2) {
-            errorExit("Fatal Error", "In onPause() and failed to close socket." + e2.getMessage() + ".");
+            errorExit("Error", "Failed to close socket: Check Alarm" + e2.getMessage() + ".");
         }
     }
 
@@ -230,7 +252,7 @@ public class MainActivity extends Activity  {
         // Check for Bluetooth support and then check to make sure it is turned on
         // Emulator doesn't support Bluetooth and will return null
         if(btAdapter==null) {
-            errorExit("Fatal Error", "Bluetooth not support");
+            errorExit("Error", "Bluetooth is not supported on this device");
         } else {
             if (btAdapter.isEnabled()) {
                 Log.d(TAG, "...Bluetooth ON...");
@@ -259,7 +281,6 @@ public class MainActivity extends Activity  {
             if (address.equals("00:00:00:00:00:00"))
                 msg = msg + ".\n\nUpdate your server address from 00:00:00:00:00:00 to the correct address on line 35 in the java code";
             msg = msg +  ".\n\nCheck that the SPP UUID: " + MY_UUID.toString() + " exists on server.\n\n";
-
             errorExit("Fatal Error", msg);
         }
     }
